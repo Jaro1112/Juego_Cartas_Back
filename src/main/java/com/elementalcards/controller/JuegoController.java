@@ -16,7 +16,7 @@ import com.elementalcards.service.UsuarioService;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://juego-cartas-back.onrender.com"})
 @RestController
 @RequestMapping("/api/juego")
 public class JuegoController {
@@ -37,6 +37,7 @@ public class JuegoController {
         Partida nuevaPartida = juegoService.iniciarPartida(jugador1, jugador2);
         return ResponseEntity.ok(nuevaPartida);
     }
+
 
     @PostMapping("/jugar-carta")
     public ResponseEntity<?> jugarCarta(@RequestBody Map<String, Long> datos) {
