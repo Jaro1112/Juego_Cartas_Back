@@ -1,5 +1,6 @@
 package com.elementalcards.service;
 
+import com.elementalcards.model.PartidaWebSocket;
 import com.elementalcards.model.Carta;
 import com.elementalcards.model.Partida;
 import com.elementalcards.model.Usuario;
@@ -254,12 +255,13 @@ public class JuegoService {
     public void rendirse(Long partidaId, Long jugadorId) {
         Partida partida = partidaRepository.findById(partidaId).orElseThrow();
         Usuario jugadorRendido = partida.getJugador1().getId().equals(jugadorId) ? partida.getJugador1() : partida.getJugador2();
+        Usuario jugadorGanador = partida.getJugador1().getId().equals(jugadorId) ? partida.getJugador2() : partida.getJugador1();
         
         jugadorRendido.setVida(0);
         finalizarPartida(partida);
         
-        messagingTemplate.convertAndSend("/topic/partida/" + partidaId, 
-            "El jugador " + jugadorRendido.getUsername() + " se ha rendido. La partida ha terminado.");
+        PartidaWebSocket partidaWebSocket = new PartidaWebSocket(partida, "RENDICION", jugadorRendido.getId());
+        messagingTemplate.convertAndSend("/topic/partida/" + partidaId, partidaWebSocket);
     }
 }
 
