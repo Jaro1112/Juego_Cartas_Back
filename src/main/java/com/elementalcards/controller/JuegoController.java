@@ -45,9 +45,12 @@ public class JuegoController {
                 return ResponseEntity.badRequest().body("El jugador no existe");
             }
             Usuario jugador2 = usuarioService.obtenerOponenteAleatorio(jugadorId);
-            System.out.println("Jugador2 encontrado: " + (jugador2 != null ? jugador2.getUsername() + ", ID: " + jugador2.getId() : "null"));
             if (jugador2 == null) {
-                return ResponseEntity.badRequest().body("No se pudo encontrar un oponente");
+                // Crear un oponente bot si no se encuentra un oponente real
+                jugador2 = usuarioService.crearUsuarioBot();
+                System.out.println("Oponente bot creado: " + jugador2.getUsername() + ", ID: " + jugador2.getId());
+            } else {
+                System.out.println("Jugador2 encontrado: " + jugador2.getUsername() + ", ID: " + jugador2.getId());
             }
             System.out.println("Iniciando partida con jugador1 ID: " + jugador1.getId() + " y jugador2 ID: " + jugador2.getId());
             Partida nuevaPartida = juegoService.iniciarPartida(jugador1, jugador2);

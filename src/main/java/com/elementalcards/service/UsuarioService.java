@@ -75,6 +75,16 @@ public class UsuarioService {
         Random rand = new Random();
         return posiblesOponentes.get(rand.nextInt(posiblesOponentes.size()));
     }
+
+    public Usuario crearUsuarioBot() {
+        String botUsername = "Bot_" + System.currentTimeMillis();
+        Usuario bot = new Usuario();
+        bot.setUsername(botUsername);
+        bot.setEmail(botUsername + "@bot.com");
+        bot.setPassword("bot_password");
+        bot.setVida(20);
+        return usuarioRepository.save(bot);
+    }
 }
 
 
