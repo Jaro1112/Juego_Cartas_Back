@@ -1,48 +1,33 @@
 package com.elementalcards.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuarios")
 public class Usuario {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true, nullable = false)
+    
+    @Column(unique = true)
     private String username;
-
-    @Column(nullable = false)
-    private String password;
-
-    @Column(unique = true, nullable = false)
+    
+    @Column(unique = true)
     private String email;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private int vida = 20; // Inicializamos con 20 de vida
-
-    // Constructor
-    public Usuario() {}
-
-    public Usuario(String username, String password, String email) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.createdAt = LocalDateTime.now();
-    }
+    
+    private String password;
+    private int vida;
 
     // Getters y setters
     public Long getId() {
         return id;
     }
+    
+    public int getVida() {
+        return vida;
+    }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setVida(int vida) {
+        this.vida = vida;
     }
 
     public String getUsername() {
@@ -61,27 +46,15 @@ public class Usuario {
         this.password = password;
     }
 
+    public boolean hasPassword() {
+        return password != null && !password.isEmpty();
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public int getVida() {
-        return vida;
-    }
-
-    public void setVida(int vida) {
-        this.vida = vida;
     }
 }
