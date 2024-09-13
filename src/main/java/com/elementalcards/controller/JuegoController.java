@@ -35,14 +35,17 @@ public class JuegoController {
     public ResponseEntity<?> iniciarPartida(@RequestBody Map<String, Long> datos) {
         try {
             Long jugadorId = datos.get("jugadorId");
+            System.out.println("Recibido jugadorId: " + jugadorId);
             if (jugadorId == null) {
                 return ResponseEntity.badRequest().body("El ID del jugador es requerido");
             }
             Usuario jugador1 = usuarioService.obtenerUsuarioPorId(jugadorId);
+            System.out.println("Jugador1 encontrado: " + (jugador1 != null ? jugador1.getUsername() : "null"));
             if (jugador1 == null) {
                 return ResponseEntity.badRequest().body("El jugador no existe");
             }
             Usuario jugador2 = usuarioService.obtenerOponenteAleatorio(jugadorId);
+            System.out.println("Jugador2 encontrado: " + (jugador2 != null ? jugador2.getUsername() : "null"));
             if (jugador2 == null) {
                 return ResponseEntity.badRequest().body("No se pudo encontrar un oponente");
             }
