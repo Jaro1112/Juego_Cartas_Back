@@ -59,6 +59,8 @@ public class UsuarioService {
             .orElseGet(() -> {
                 Usuario nuevoUsuario = new Usuario();
                 nuevoUsuario.setUsername(username);
+                nuevoUsuario.setEmail(username + "@gmail.com"); // Añade un email por defecto
+                nuevoUsuario.setPassword("123"); // Añade una contraseña por defecto
                 nuevoUsuario.setVida(20);
                 return usuarioRepository.save(nuevoUsuario);
             });

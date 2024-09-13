@@ -49,7 +49,8 @@ public ResponseEntity<?> iniciarPartida(@RequestBody Map<String, Long> datos) {
         if (jugador2 == null) {
             jugador2 = usuarioService.crearUsuarioBot();
             System.out.println("Oponente bot creado: " + jugador2.getUsername() + ", ID: " + jugador2.getId());
-            jugador2 = usuarioService.guardarUsuario(jugador2); // Asegúrate de que el bot se guarde en la base de datos
+            jugador2 = usuarioService.guardarUsuario(jugador2);
+            System.out.println("Oponente bot guardado: " + jugador2.getUsername() + ", ID: " + jugador2.getId());
         } else {
             System.out.println("Jugador2 encontrado: " + jugador2.getUsername() + ", ID: " + jugador2.getId());
         }
