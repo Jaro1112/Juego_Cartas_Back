@@ -15,10 +15,10 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/ws/**", "/api/juego/**").permitAll()
+                .requestMatchers("/ws/**", "/api/**", "/").permitAll()
                 .anyRequest().authenticated()
             )
-            .httpBasic(httpBasic -> {});
+            .httpBasic(httpBasic -> httpBasic.disable());
         return http.build();
     }
 }

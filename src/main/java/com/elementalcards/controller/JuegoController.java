@@ -17,7 +17,7 @@ import com.elementalcards.service.UsuarioService;
 
 import java.util.Map;
 
-@CrossOrigin(origins = {"http://localhost:3000", "https://juego-cartas-back.onrender.com"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://juego-cartas-back.onrender.com", "https://juego-cartas-front.vercel.app"})
 @RestController
 @RequestMapping("/api/juego")
 public class JuegoController {
