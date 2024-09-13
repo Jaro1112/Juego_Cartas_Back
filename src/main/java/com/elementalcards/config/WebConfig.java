@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000", "https://juego-cartas-back.onrender.com", "https://juego-cartas-front.vercel.app")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
+                .exposedHeaders("Access-Control-Allow-Origin")
                 .allowCredentials(true);
     }
 }
