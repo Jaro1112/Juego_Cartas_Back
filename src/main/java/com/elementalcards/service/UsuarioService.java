@@ -84,7 +84,6 @@ public class UsuarioService {
         bot.setUsername(botUsername);
         bot.setEmail(botUsername + "@bot.com");
         bot.setPassword("bot_password");
-        bot.setVida(20);
         return usuarioRepository.save(bot);
     }
 
