@@ -106,4 +106,14 @@ public class JuegoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear o obtener usuario: " + e.getMessage());
         }
     }
+
+    @PostMapping("/rendirse")
+    public ResponseEntity<?> rendirse(@RequestBody Map<String, Long> datos) {
+        try {
+            juegoService.rendirse(datos.get("partidaId"), datos.get("jugadorId"));
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al rendirse: " + e.getMessage());
+        }
+    }
 }

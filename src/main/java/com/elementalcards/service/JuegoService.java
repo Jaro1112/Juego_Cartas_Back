@@ -248,5 +248,16 @@ public class JuegoService {
         return partidaRepository.findById(partidaId)
             .orElseThrow(() -> new RuntimeException("Partida no encontrada con ID: " + partidaId));
     }
+
+    public void rendirse(Long partidaId, Long jugadorId) {
+        Partida partida = partidaRepository.findById(partidaId).orElseThrow();
+        Usuario jugadorRendido = partida.getJugador1().getId().equals(jugadorId) ? partida.getJugador1() : partida.getJugador2();
+        
+        jugadorRendido.setVida(0);
+        finalizarPartida(partida);
+        
+        messagingTemplate.convertAndSend("/topic/partida/" + partidaId, 
+            "El jugador " + jugadorRendido.getUsername() + " se ha rendido. La partida ha terminado.");
+    }
 }
 
