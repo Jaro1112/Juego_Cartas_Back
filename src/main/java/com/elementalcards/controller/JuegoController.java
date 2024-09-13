@@ -32,36 +32,37 @@ public class JuegoController {
     }
 
     @PostMapping("/iniciar")
-    public ResponseEntity<?> iniciarPartida(@RequestBody Map<String, Long> datos) {
-        try {
-            Long jugadorId = datos.get("jugadorId");
-            System.out.println("Recibido jugadorId: " + jugadorId);
-            if (jugadorId == null) {
-                return ResponseEntity.badRequest().body("El ID del jugador es requerido");
-            }
-            Usuario jugador1 = usuarioService.obtenerUsuarioPorId(jugadorId);
-            System.out.println("Jugador1 encontrado: " + (jugador1 != null ? jugador1.getUsername() + ", ID: " + jugador1.getId() : "null"));
-            if (jugador1 == null) {
-                return ResponseEntity.badRequest().body("El jugador no existe");
-            }
-            
-            Usuario jugador2 = usuarioService.buscarOponenteConTimeout(jugadorId, 30);
-            if (jugador2 == null) {
-                jugador2 = usuarioService.crearUsuarioBot();
-                System.out.println("Oponente bot creado: " + jugador2.getUsername() + ", ID: " + jugador2.getId());
-            } else {
-                System.out.println("Jugador2 encontrado: " + jugador2.getUsername() + ", ID: " + jugador2.getId());
-            }
-            
-            System.out.println("Iniciando partida con jugador1 ID: " + jugador1.getId() + " y jugador2 ID: " + jugador2.getId());
-            Partida nuevaPartida = juegoService.iniciarPartida(jugador1, jugador2);
-            System.out.println("Nueva partida creada con ID: " + nuevaPartida.getId());
-            return ResponseEntity.ok(nuevaPartida);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al iniciar la partida: " + e.getMessage());
+public ResponseEntity<?> iniciarPartida(@RequestBody Map<String, Long> datos) {
+    try {
+        Long jugadorId = datos.get("jugadorId");
+        System.out.println("Recibido jugadorId: " + jugadorId);
+        if (jugadorId == null) {
+            return ResponseEntity.badRequest().body("El ID del jugador es requerido");
         }
+        Usuario jugador1 = usuarioService.obtenerUsuarioPorId(jugadorId);
+        System.out.println("Jugador1 encontrado: " + (jugador1 != null ? jugador1.getUsername() + ", ID: " + jugador1.getId() : "null"));
+        if (jugador1 == null) {
+            return ResponseEntity.badRequest().body("El jugador no existe");
+        }
+        
+        Usuario jugador2 = usuarioService.buscarOponenteConTimeout(jugadorId, 30);
+        if (jugador2 == null) {
+            jugador2 = usuarioService.crearUsuarioBot();
+            System.out.println("Oponente bot creado: " + jugador2.getUsername() + ", ID: " + jugador2.getId());
+            jugador2 = usuarioService.guardarUsuario(jugador2); // Asegúrate de que el bot se guarde en la base de datos
+        } else {
+            System.out.println("Jugador2 encontrado: " + jugador2.getUsername() + ", ID: " + jugador2.getId());
+        }
+        
+        System.out.println("Iniciando partida con jugador1 ID: " + jugador1.getId() + " y jugador2 ID: " + jugador2.getId());
+        Partida nuevaPartida = juegoService.iniciarPartida(jugador1, jugador2);
+        System.out.println("Nueva partida creada con ID: " + nuevaPartida.getId());
+        return ResponseEntity.ok(nuevaPartida);
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al iniciar la partida: " + e.getMessage());
     }
+}
 
     @PostMapping("/jugar-carta")
     public ResponseEntity<?> jugarCarta(@RequestBody Map<String, Long> datos) {

@@ -97,6 +97,10 @@ public class UsuarioService {
         return usuarioRepository.save(bot);
     }
 
+    public Usuario guardarUsuario(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
+
     // Otros métodos...
 
     private static class QueueEntry {
