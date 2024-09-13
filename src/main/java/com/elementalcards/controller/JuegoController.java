@@ -40,16 +40,17 @@ public class JuegoController {
                 return ResponseEntity.badRequest().body("El ID del jugador es requerido");
             }
             Usuario jugador1 = usuarioService.obtenerUsuarioPorId(jugadorId);
-            System.out.println("Jugador1 encontrado: " + (jugador1 != null ? jugador1.getUsername() : "null"));
+            System.out.println("Jugador1 encontrado: " + (jugador1 != null ? jugador1.getUsername() + ", ID: " + jugador1.getId() : "null"));
             if (jugador1 == null) {
                 return ResponseEntity.badRequest().body("El jugador no existe");
             }
             Usuario jugador2 = usuarioService.obtenerOponenteAleatorio(jugadorId);
-            System.out.println("Jugador2 encontrado: " + (jugador2 != null ? jugador2.getUsername() : "null"));
+            System.out.println("Jugador2 encontrado: " + (jugador2 != null ? jugador2.getUsername() + ", ID: " + jugador2.getId() : "null"));
             if (jugador2 == null) {
                 return ResponseEntity.badRequest().body("No se pudo encontrar un oponente");
             }
             Partida nuevaPartida = juegoService.iniciarPartida(jugador1, jugador2);
+            System.out.println("Nueva partida creada con ID: " + nuevaPartida.getId());
             return ResponseEntity.ok(nuevaPartida);
         } catch (Exception e) {
             e.printStackTrace();
