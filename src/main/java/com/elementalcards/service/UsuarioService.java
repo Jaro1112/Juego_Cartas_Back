@@ -10,6 +10,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.Optional;
+import java.lang.Thread;
+import java.lang.InterruptedException;
 
 @Service
 public class UsuarioService {
@@ -84,6 +86,25 @@ public class UsuarioService {
         bot.setPassword("bot_password");
         bot.setVida(20);
         return usuarioRepository.save(bot);
+    }
+
+    public Usuario buscarOponenteConTimeout(Long jugadorId, int timeoutSeconds) {
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + (timeoutSeconds * 1000);
+        
+        while (System.currentTimeMillis() < endTime) {
+            Usuario oponente = obtenerOponenteAleatorio(jugadorId);
+            if (oponente != null) {
+                return oponente;
+            }
+            try {
+                Thread.sleep(1000); // Esperar 1 segundo antes de intentar de nuevo
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return null;
+            }
+        }
+        return null; // Si no se encuentra un oponente después del timeout
     }
 }
 
