@@ -26,6 +26,8 @@ public class JuegoService {
     }
 
     public Partida iniciarPartida(Usuario jugador1, Usuario jugador2) {
+        reiniciarJugador(jugador1);
+        reiniciarJugador(jugador2);
         Partida nuevaPartida = new Partida(jugador1, jugador2);
         
         // Repartir 5 cartas aleatorias a cada jugador
