@@ -111,9 +111,10 @@ public class JuegoController {
     public ResponseEntity<?> rendirse(@RequestBody Map<String, Long> datos) {
         try {
             juegoService.rendirse(datos.get("partidaId"), datos.get("jugadorId"));
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body("{\"message\": \"Rendición exitosa\"}");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al rendirse: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("{\"error\": \"Error al rendirse: " + e.getMessage() + "\"}");
         }
     }
 }
