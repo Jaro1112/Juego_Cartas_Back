@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = {"http://localhost:3000", "https://juego-cartas-back.onrender.com", "https://juego-cartas-front.vercel.app"})
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
