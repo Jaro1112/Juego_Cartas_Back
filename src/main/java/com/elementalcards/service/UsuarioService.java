@@ -5,6 +5,10 @@ import com.elementalcards.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UsuarioService {
@@ -59,6 +63,18 @@ public class UsuarioService {
             usuario = usuarioRepository.save(usuario);
         }
         return usuario;
+    }
+
+    public Usuario obtenerOponenteAleatorio(Long jugadorId) {
+        List<Usuario> todosLosUsuarios = usuarioRepository.findAll();
+        List<Usuario> posiblesOponentes = todosLosUsuarios.stream()
+                .filter(u -> !u.getId().equals(jugadorId))
+                .collect(Collectors.toList());
+        if (posiblesOponentes.isEmpty()) {
+            return null;
+        }
+        Random rand = new Random();
+        return posiblesOponentes.get(rand.nextInt(posiblesOponentes.size()));
     }
 }
 

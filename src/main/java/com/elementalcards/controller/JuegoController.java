@@ -32,12 +32,19 @@ public class JuegoController {
     }
 
     @PostMapping("/iniciar")
-    public ResponseEntity<?> iniciarPartida(@RequestBody Map<String, Long> jugadores) {
+    public ResponseEntity<?> iniciarPartida(@RequestBody Map<String, Long> datos) {
         try {
-            Usuario jugador1 = usuarioService.obtenerUsuarioPorId(jugadores.get("jugador1Id"));
-            Usuario jugador2 = usuarioService.obtenerUsuarioPorId(jugadores.get("jugador2Id"));
-            if (jugador1 == null || jugador2 == null) {
-                return ResponseEntity.badRequest().body("Uno o ambos jugadores no existen");
+            Long jugadorId = datos.get("jugadorId");
+            if (jugadorId == null) {
+                return ResponseEntity.badRequest().body("El ID del jugador es requerido");
+            }
+            Usuario jugador1 = usuarioService.obtenerUsuarioPorId(jugadorId);
+            if (jugador1 == null) {
+                return ResponseEntity.badRequest().body("El jugador no existe");
+            }
+            Usuario jugador2 = usuarioService.obtenerOponenteAleatorio(jugadorId);
+            if (jugador2 == null) {
+                return ResponseEntity.badRequest().body("No se pudo encontrar un oponente");
             }
             Partida nuevaPartida = juegoService.iniciarPartida(jugador1, jugador2);
             return ResponseEntity.ok(nuevaPartida);
