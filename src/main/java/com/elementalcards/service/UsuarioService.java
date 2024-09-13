@@ -28,6 +28,17 @@ public class UsuarioService {
         return usuarioRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
+
+    public Usuario crearOObtenerUsuario(String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username);
+        if (usuario == null) {
+            usuario = new Usuario();
+            usuario.setUsername(username);
+            usuario.setVida(20);
+            usuario = usuarioRepository.save(usuario);
+        }
+        return usuario;
+    }
 }
 
 

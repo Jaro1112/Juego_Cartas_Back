@@ -75,4 +75,15 @@ public class JuegoController {
     public ResponseEntity<String> root() {
         return ResponseEntity.ok("Bienvenido a la API del Juego de Cartas Elemental");
     }
+
+    @PostMapping("/usuarios")
+    public ResponseEntity<?> crearOObtenerUsuario(@RequestBody Map<String, String> datos) {
+        try {
+            String username = datos.get("username");
+            Usuario usuario = usuarioService.crearOObtenerUsuario(username);
+            return ResponseEntity.ok(usuario);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear o obtener usuario: " + e.getMessage());
+        }
+    }
 }
