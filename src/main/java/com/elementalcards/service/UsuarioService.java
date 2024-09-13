@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -23,10 +24,10 @@ public class UsuarioService {
     }
 
     public Usuario registrarUsuario(String username, String email, String password) {
-        if (usuarioRepository.findByEmail(email) != null) {
+        if (usuarioRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("El email ya está registrado");
         }
-        if (usuarioRepository.findByUsername(username) != null) {
+        if (usuarioRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("El nombre de usuario ya está en uso");
         }
         Usuario usuario = new Usuario();
@@ -38,31 +39,29 @@ public class UsuarioService {
     }
 
     public Usuario login(String email, String password) {
-        Usuario usuario = usuarioRepository.findByEmail(email);
-        if (usuario == null || !passwordEncoder.matches(password, usuario.getPassword())) {
-            throw new RuntimeException("Credenciales inválidas");
-        }
-        return usuario;
+        return usuarioRepository.findByEmail(email)
+            .filter(usuario -> passwordEncoder.matches(password, usuario.getPassword()))
+            .orElseThrow(() -> new RuntimeException("Credenciales inválidas"));
     }
 
     public Usuario buscarPorUsername(String username) {
-        return usuarioRepository.findByUsername(username);
+        return usuarioRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con username: " + username));
     }
 
     public Usuario obtenerUsuarioPorId(Long id) {
         return usuarioRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
     }
 
     public Usuario crearOObtenerUsuario(String username) {
-        Usuario usuario = usuarioRepository.findByUsername(username);
-        if (usuario == null) {
-            usuario = new Usuario();
-            usuario.setUsername(username);
-            usuario.setVida(20);
-            usuario = usuarioRepository.save(usuario);
-        }
-        return usuario;
+        return usuarioRepository.findByUsername(username)
+            .orElseGet(() -> {
+                Usuario nuevoUsuario = new Usuario();
+                nuevoUsuario.setUsername(username);
+                nuevoUsuario.setVida(20);
+                return usuarioRepository.save(nuevoUsuario);
+            });
     }
 
     public Usuario obtenerOponenteAleatorio(Long jugadorId) {

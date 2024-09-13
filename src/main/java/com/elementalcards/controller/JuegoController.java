@@ -90,9 +90,13 @@ public class JuegoController {
     public ResponseEntity<?> crearOObtenerUsuario(@RequestBody Map<String, String> datos) {
         try {
             String username = datos.get("username");
+            System.out.println("Intentando crear o obtener usuario: " + username);
             Usuario usuario = usuarioService.crearOObtenerUsuario(username);
+            System.out.println("Usuario creado/obtenido: " + usuario.getId() + " - " + usuario.getUsername());
             return ResponseEntity.ok(usuario);
         } catch (Exception e) {
+            System.err.println("Error al crear o obtener usuario: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear o obtener usuario: " + e.getMessage());
         }
     }
