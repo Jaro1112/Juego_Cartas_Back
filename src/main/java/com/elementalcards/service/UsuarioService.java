@@ -1,22 +1,28 @@
 package com.elementalcards.service;
 
-import com.elementalcards.model.Usuario;
-import com.elementalcards.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Random;
+import java.util.AbstractMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.Optional;
 import java.lang.Thread;
 import java.lang.InterruptedException;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+import com.elementalcards.model.Usuario;
+import com.elementalcards.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final ConcurrentLinkedQueue<QueueEntry> waitingQueue = new ConcurrentLinkedQueue<>();
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -66,16 +72,28 @@ public class UsuarioService {
             });
     }
 
-    public Usuario obtenerOponenteAleatorio(Long jugadorId) {
-        List<Usuario> todosLosUsuarios = usuarioRepository.findAll();
-        List<Usuario> posiblesOponentes = todosLosUsuarios.stream()
-                .filter(u -> !u.getId().equals(jugadorId))
-                .collect(Collectors.toList());
-        if (posiblesOponentes.isEmpty()) {
+    public Usuario buscarOponenteConTimeout(Long jugadorId, int timeoutSeconds) {
+        CompletableFuture<Usuario> future = new CompletableFuture<>();
+        QueueEntry entry = new QueueEntry(jugadorId, future);
+        waitingQueue.offer(entry);
+
+        while (!future.isDone()) {
+            QueueEntry polledEntry = waitingQueue.poll();
+            if (polledEntry != null && !polledEntry.getFuture().isDone() && !polledEntry.getJugadorId().equals(jugadorId)) {
+                Usuario jugador = usuarioRepository.findById(jugadorId).orElseThrow();
+                polledEntry.getFuture().complete(jugador);
+                return usuarioRepository.findById(polledEntry.getJugadorId()).orElseThrow();
+            } else if (polledEntry != null) {
+                waitingQueue.offer(polledEntry);
+            }
+        }
+
+        try {
+            return future.get(timeoutSeconds, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            waitingQueue.removeIf(queueEntry -> queueEntry.getJugadorId().equals(jugadorId));
             return null;
         }
-        Random rand = new Random();
-        return posiblesOponentes.get(rand.nextInt(posiblesOponentes.size()));
     }
 
     public Usuario crearUsuarioBot() {
@@ -87,24 +105,27 @@ public class UsuarioService {
         return usuarioRepository.save(bot);
     }
 
-    public Usuario buscarOponenteConTimeout(Long jugadorId, int timeoutSeconds) {
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime + (timeoutSeconds * 1000);
-        
-        while (System.currentTimeMillis() < endTime) {
-            Usuario oponente = obtenerOponenteAleatorio(jugadorId);
-            if (oponente != null) {
-                return oponente;
-            }
-            try {
-                Thread.sleep(1000); // Esperar 1 segundo antes de intentar de nuevo
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return null;
-            }
+    // Otros métodos...
+
+    private static class QueueEntry {
+        private final Long jugadorId;
+        private final CompletableFuture<Usuario> future;
+    
+        public QueueEntry(Long jugadorId, CompletableFuture<Usuario> future) {
+            this.jugadorId = jugadorId;
+            this.future = future;
         }
-        return null; // Si no se encuentra un oponente después del timeout
+    
+        public Long getJugadorId() {
+            return jugadorId;
+        }
+    
+        public CompletableFuture<Usuario> getFuture() {
+            return future;
+        }
     }
 }
+
+
 
 
