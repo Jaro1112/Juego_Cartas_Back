@@ -49,6 +49,7 @@ public class JuegoController {
             if (jugador2 == null) {
                 return ResponseEntity.badRequest().body("No se pudo encontrar un oponente");
             }
+            System.out.println("Iniciando partida con jugador1 ID: " + jugador1.getId() + " y jugador2 ID: " + jugador2.getId());
             Partida nuevaPartida = juegoService.iniciarPartida(jugador1, jugador2);
             System.out.println("Nueva partida creada con ID: " + nuevaPartida.getId());
             return ResponseEntity.ok(nuevaPartida);
