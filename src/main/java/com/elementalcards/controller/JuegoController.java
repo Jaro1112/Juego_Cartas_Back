@@ -70,4 +70,9 @@ public class JuegoController {
         juegoService.simularPartida(partidaId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/")
+    public ResponseEntity<String> root() {
+        return ResponseEntity.ok("Bienvenido a la API del Juego de Cartas Elemental");
+    }
 }
