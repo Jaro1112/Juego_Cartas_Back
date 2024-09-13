@@ -15,7 +15,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/juego/**").permitAll()
+                .requestMatchers("/ws/**", "/api/juego/**").permitAll()
                 .anyRequest().authenticated()
             )
             .httpBasic(httpBasic -> {});

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import com.elementalcards.model.Partida;
 import com.elementalcards.model.Usuario;
 import com.elementalcards.service.JuegoService;
@@ -31,13 +32,20 @@ public class JuegoController {
     }
 
     @PostMapping("/iniciar")
-    public ResponseEntity<Partida> iniciarPartida(@RequestBody Map<String, Long> jugadores) {
-        Usuario jugador1 = usuarioService.obtenerUsuarioPorId(jugadores.get("jugador1Id"));
-        Usuario jugador2 = usuarioService.obtenerUsuarioPorId(jugadores.get("jugador2Id"));
-        Partida nuevaPartida = juegoService.iniciarPartida(jugador1, jugador2);
-        return ResponseEntity.ok(nuevaPartida);
+    public ResponseEntity<?> iniciarPartida(@RequestBody Map<String, Long> jugadores) {
+        try {
+            Usuario jugador1 = usuarioService.obtenerUsuarioPorId(jugadores.get("jugador1Id"));
+            Usuario jugador2 = usuarioService.obtenerUsuarioPorId(jugadores.get("jugador2Id"));
+            if (jugador1 == null || jugador2 == null) {
+                return ResponseEntity.badRequest().body("Uno o ambos jugadores no existen");
+            }
+            Partida nuevaPartida = juegoService.iniciarPartida(jugador1, jugador2);
+            return ResponseEntity.ok(nuevaPartida);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al iniciar la partida: " + e.getMessage());
+        }
     }
-
 
     @PostMapping("/jugar-carta")
     public ResponseEntity<?> jugarCarta(@RequestBody Map<String, Long> datos) {

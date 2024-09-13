@@ -18,6 +18,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000", "https://juego-cartas-back.onrender.com").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000", "https://juego-cartas-back.onrender.com", "https://juego-cartas-front.vercel.app").withSockJS();
     }
 }
